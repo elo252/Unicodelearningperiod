@@ -2,6 +2,7 @@ const express = require('express')
 const router = new express.Router()
 const {
   createCourse,
+  updateCourse,
   getCourse,
   getCoursebByOwner,
   getCourseByName,
@@ -10,6 +11,8 @@ const {
 
 //Create New Course 
 router.post('/new', createCourse)
+
+
 
 //Get Courses
 router.get('/get', getCourse)
@@ -20,9 +23,7 @@ router.get('/get/:owner', getCoursebByOwner)
 //Get courses by Name
 router.get('/getbyname/:name', getCourseByName)
 
-//Get Course by enrollment
-
 //Delete Course
-router.delete('/delete', deleteCourse)
+router.delete('/delete/:id', deleteCourse)
 
 module.exports = router

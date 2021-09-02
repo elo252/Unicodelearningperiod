@@ -1,16 +1,16 @@
 
-const Student = require('../models/user')
+const User = require('../models/user')
 
 
 
-exports.createStudent = async (req, res) => {
-    const student = new Student(req.body)
+exports.createUser = async (req, res) => {
+    const user = new User(req.body)
   
     try {
-      await student.save()
+      await user.save()
       res.status(201).json({
         success: true,
-        data: student
+        data: user
       })
     }catch(e){
       res.status(400).json({
@@ -23,8 +23,10 @@ exports.createStudent = async (req, res) => {
 
 exports.getUsers = async (req,res) => {
   try{
-      const getUser = await Student.find({})
-      
+      const getUser = await User.find({})
+      if (!getUser.length) {
+        throw new Error('No users!')
+       }
       res.json({
           success: true,
           data: getUser
@@ -38,10 +40,49 @@ exports.getUsers = async (req,res) => {
   }
 }
 
-exports.enrollCourse = async (req, res) => {
+exports.getStudents = async (req, res) => {
+  try{
+    const getStudents = await User.find({role: 'Student'}).populate('Enrolled')
+    if (!getStudents.length) {
+      throw new Error('No users!')
+     }
+    res.json({
+        success: true,
+        data: getStudents
+       
+    })
+} catch(e) {
+    res.status(400).json({
+        success: false,
+        message: e.message
+    })
+}
+}
+
+exports.getTeachers = async (req, res) => {
+  try{
+    const getTeachers = await User.find({role: 'Teacher'}).populate('owner')
+    if (!getTeachers.length) {
+      throw new Error('No users!')
+     }
+    res.json({
+        success: true,
+        data: getTeachers
+       
+    })
+} catch(e) {
+    res.status(400).json({
+        success: false,
+        message: e.message
+    })
+}
+}
+
+exports.updateUser = async (req, res) => {
+  
   const _id = req.params.id
   const updates = Object.keys(req.body)
-  const allowedUpdates = ['Enrolled']
+  const allowedUpdates = ['mobile']
   const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
 
   if (!isValidOperation) {
@@ -49,15 +90,15 @@ exports.enrollCourse = async (req, res) => {
   }
 
   try {
-    const student = await Student.findOneAndUpdate({_id: _id}, req.body, {new:true})
-
-    if(!student){
-      return res.status(404).send()
+    const user = await User.findOneAndUpdate({_id: _id}, req.body, {new:true})
+  
+    if(!user){
+      return res.status(404).send('User not found')
    }
       
       res.json({
         success: true,
-        data: student
+        data: User
       })
   } catch (e) {
     res.status(500).json({
@@ -68,48 +109,47 @@ exports.enrollCourse = async (req, res) => {
   }
 }
 
-exports.deleteStudent = async (req, res) => {
-  const _id = req.params.id  
+exports.enrollCourse = async (req, res) => {
+  //if else for Student Or post login
+  const _id = req.params.id
+  const updates = Object.keys(req.body)
+  const allowedUpdates = ['Enrolled']
+  const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
+
+  if (!isValidOperation) {
+      return res.status(400).send({ error: 'Invalid updates!' })
+  }
+
   try {
-      const student = await Student.findOneAndDelete({id : _id})
-      res.json({
-        success: true,
-        data: student
-      })
-    } catch (e) {
-      res.status(500).json({
-        success: false,
-        message: e.message
-      })
-    }
-}
-
-const Teacher = require('../models/user')
-
-exports.createTeacher = async (req, res) => {
-    const teacher = new Teacher(req.body)
-  
-    try {
-      await teacher.save()
-      res.status(201).json({
-        success: true,
-        data: teacher
-      })
-    }catch(e){
-      res.status(400).json({
-        success: false,
-        message: e.message
-      })
-    }
-}
-
-exports.deleteTeacher = async (req, res) => {
-  const teacher = await Teacher.findOneAndDelete({id : _id})  
-  try {
+    const user = await User.findOneAndUpdate({_id: _id}, req.body, {new:true})
+    // const user = await User.findOneAndUpdate({role: 'Student'}, req.body, {new:true})
+    if(!user){
+      return res.status(404).send()
+   }
       
       res.json({
         success: true,
-        data: teacher
+        data: User
+      })
+  } catch (e) {
+    res.status(500).json({
+      success: false,
+      message: e.message
+    })
+
+  }
+}
+
+exports.deleteUser = async (req, res) => {
+  const _id = req.params.id  
+  try {
+      const user = await User.findOneAndDelete({_id:_id})
+      if (!_id) {
+        throw new Error('No users to delete!');
+    }
+      res.json({
+        success: true,
+        data: req.user
       })
     } catch (e) {
       res.status(500).json({
@@ -118,12 +158,14 @@ exports.deleteTeacher = async (req, res) => {
       })
     }
 }
+
+
 
 // exports.login = async (req, res) => {
 //   try {
 // user = Users.findByID(req.body.email)
-//    If(user=="student"){
-// //Return student 
+//    If(user=="Student"){
+// //Return User 
 // } else {
 // // Return teacher 
 // }
@@ -136,8 +178,8 @@ exports.deleteTeacher = async (req, res) => {
 // }
 
 // 
-// If(req.body.role=="student"){
-// //Do student ke tasks
+// If(req.body.role=="Student"){
+// //Do Student ke tasks
 // }Else{
 // //Do teacher ke tasks
 // }

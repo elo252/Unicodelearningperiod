@@ -15,10 +15,13 @@ exports.createCourse = async (req, res) => {
       })
     }
 }
+
 exports.getCourse = async (req,res) => {
     try{
         const getCourse = await Course.find({})
-        
+        if (!getCourse.length) {
+            throw new Error('No Courses!')
+           }
         res.json({
             success: true,
             data: getCourse
@@ -36,7 +39,7 @@ exports.getCoursebByOwner = async (req,res) => {
     try{
         const getCourseByOwner = await Course.find({owner: req.params.owner})
 
-        if (getCourseByOwner.lenght) {
+        if (!getCourseByOwner.lenght) {
             throw new Error('Course not found');
            }
 
@@ -73,16 +76,20 @@ exports.getCourseByName = async (req,res) => {
 }
 
 exports.deleteCourse = async (req, res) => {
+    const _id = req.params.id  
     try {
-      await req.course.remove()
-      res.json({
-        success: true,
-        data: req.course
-      })
-    } catch (e) {
-      res.status(500).json({
-        success: false,
-        message: e.message
-      })
-    }
-}
+        const course = await Course.findOneAndDelete({_id:_id})
+        if (!_id) {
+          throw new Error('No Courses to delete!')
+      }
+        res.json({
+          success: true,
+          data: req.course
+        })
+      } catch (e) {
+        res.status(500).json({
+          success: false,
+          message: e.message
+        })
+      }
+  }
