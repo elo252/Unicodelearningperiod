@@ -4,13 +4,16 @@ const User = require('../models/user')
 
 
 exports.createUser = async (req, res) => {
+  try {
     const user = new User(req.body)
+
+    const token = await user.generateAuthToken()
   
-    try {
+    
       await user.save()
       res.status(201).json({
         success: true,
-        data: user
+        data: user, token
       })
     }catch(e){
       res.status(400).json({
@@ -20,6 +23,40 @@ exports.createUser = async (req, res) => {
     }
 }
 
+exports.loginUser = async (req, res) => {
+  try{
+    
+
+    const user = await User.findByCredentials(req.body.email, req.body.password)
+
+    const token = await user.generateAuthToken()
+
+    res.status(201).json({
+      success: true,
+      data: user, token
+    })
+
+  } catch(e){
+    console.log(e)
+    res.status(400).json({
+      success: false
+    })
+  }
+}
+
+exports.logoutUser = async (req,res) => {
+  try {
+    req.user.tokens = req.user.tokens.filter((token) => {
+        return token.token !== req.token
+    })
+    await req.user.save()
+
+    res.send()
+} catch (e) {
+    res.status(500).send()
+}
+
+}
 
 exports.getUsers = async (req,res) => {
   try{
@@ -158,6 +195,8 @@ exports.deleteUser = async (req, res) => {
       })
     }
 }
+
+
 
 
 

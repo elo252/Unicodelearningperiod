@@ -16,7 +16,7 @@ const courseSchema =  new mongoose.Schema({
     },
 
     duration: {
-        type: String,
+        type: Number,
         required: [true, 'Duration']
     },
 

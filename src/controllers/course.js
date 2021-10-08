@@ -75,6 +75,37 @@ exports.getCourseByName = async (req,res) => {
     }
 }
 
+exports.updateCourse = async (req, res) => {
+  
+    const _id = req.params.id
+    const updates = Object.keys(req.body)
+    const allowedUpdates = ['name','descr','duration']
+    const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
+  
+    if (!isValidOperation) {
+        return res.status(400).send({ error: 'Invalid updates!' })
+    }
+  
+    try {
+      const course = await Course.findOneAndUpdate({_id: _id}, req.body, {new:true})
+    
+      if(!course){
+        return res.status(404).send('Course not found')
+     }
+        
+        res.json({
+          success: true,
+          data: course
+        })
+    } catch (e) {
+      res.status(500).json({
+        success: false,
+        message: e.message
+      })
+  
+    }
+  }
+
 exports.deleteCourse = async (req, res) => {
     const _id = req.params.id  
     try {
