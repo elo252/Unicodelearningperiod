@@ -1,4 +1,7 @@
 const Course = require('../models/course')
+const multer = require('multer')
+const sharp = require('sharp')
+
 exports.createCourse = async (req, res) => {
     const course = new Course(req.body)
   
@@ -14,6 +17,65 @@ exports.createCourse = async (req, res) => {
         message: e.message
       })
     }
+
+//video upload
+
+exports.videoUpload = multer({
+  limits: {
+    fileSize: 50000000,
+  },
+  fileFilter(req, file, cb) {
+    if (!file.originalname.match(/\.(mp4|MPEG-4|mkv)$/)) {
+      return cb(new Error('Please upload a video!!'))
+    }
+    cb(undefined, true)
+  }
+})
+
+exports.course_videoUpload = async (req, res) => {
+  try {
+    const buffer_video = await sharp(req.file.buffer).toBuffer()
+    req.course.video = buffer_video
+    await req.course.save()
+    res.json({
+      success: true
+    })
+  } catch(e) {
+    res.status(400).json({
+      success: false,
+      message: e.message
+    })
+  }
+}
+
+//file upload
+
+exports.fileUpload = multer({
+  limits: {
+    fileSize: 10000000
+  },
+  fileFilter(req, file, cb) {
+    if(!file.originalname.match(/\.pdf|ppt|odt|doc|docx/)) {
+      return cb(new Error('Please upload a valid file!!'))
+    }
+    cb(undefined, true)
+  }
+})
+
+exports.course_fileUpload = async (req, res) => {
+  try {
+    const buffer_file = await sharp(req.file.buffer_file).toBuffer()
+    req.course.file = buffer_file
+    await req.course.save()
+    res.json({
+      success: true
+    })
+  } catch(e) {
+    res.status(400).json({
+      success: false,
+      message: e.message
+    })
+  }
 }
 
 exports.getCourse = async (req,res) => {

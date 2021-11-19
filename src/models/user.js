@@ -48,6 +48,9 @@ const userSchema = new mongoose.Schema({
     minLength: 8
   },
   
+  profilePic: {
+    type: Buffer
+  },
 
   
 });
