@@ -1,4 +1,7 @@
 const Course = require('../models/course')
+const multer = require('multer')
+const sharp = require('sharp')
+
 exports.createCourse = async (req, res) => {
     const course = new Course(req.body)
   
@@ -14,6 +17,83 @@ exports.createCourse = async (req, res) => {
         message: e.message
       })
     }
+
+//video upload
+
+const videoStorage = multer.diskStorage({
+  destination: './uploads/videos',
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + '_' + Date.now() + path.extname(file.originalname))
+  }
+})
+
+exports.videoUpload = multer({
+  storage: videoStorage,
+  limits: {
+    fileSize: 50000000,
+  },
+  fileFilter(req, file, cb) {
+    if (!file.originalname.match(/\.(mp4|MPEG-4|mkv)$/)) {
+      return cb(new Error('Please upload a video!!'))
+    }
+    cb(undefined, true)
+  }
+})
+
+exports.course_videoUpload = async (req, res) => {
+    //const buffer_video = await sharp(req.file.buffer).toBuffer()
+    //req.course.video = buffer_video
+    //await req.course.save()
+    videoUpload (req, res, (err) => {
+      if(err) {
+        res.json({
+          success: false,
+          error: err.message
+        })
+      }
+      res.json({
+        success: true
+      })
+    })
+}
+
+//file upload
+
+const fileStorage = multer.diskStorage({
+  destination: './uploads/files',
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
+  }
+})
+
+exports.fileUpload = multer({
+  storage: fileStorage,
+  limits: {
+    fileSize: 10000000
+  },
+  fileFilter(req, file, cb) {
+    if(!file.originalname.match(/\.pdf|ppt|odt|doc|docx/)) {
+      return cb(new Error('Please upload a valid file!!'))
+    }
+    cb(undefined, true)
+  }
+})
+
+exports.course_fileUpload = async (req, res) => {
+    //const buffer_file = await sharp(req.file.buffer_file).toBuffer()
+    //req.course.file = buffer_file
+    //await req.course.save()
+    fileUpload (req, res, (err) => {
+      if(err) {
+        res.json({
+          success: false,
+          error: err.message
+        })
+      }
+      res.json({
+        success: true
+      })
+    })
 }
 
 exports.getCourse = async (req,res) => {

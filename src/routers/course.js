@@ -3,6 +3,8 @@ const router = new express.Router()
 const auth = require('../middleware/auth')
 const {
   createCourse,
+  course_videoUpload,
+  course_fileUpload,
   updateCourse,
   getCourse,
   getCoursebByOwner,
@@ -12,6 +14,12 @@ const {
 
 //Create New Course 
 router.post('/new', auth, createCourse)
+
+//Upload videos in course
+router.post('/uploadvideo', auth, upload.single('video'), course_videoUpload)
+
+//Upload files in course
+router.post('/uploadfile', auth, upload.single('file'), course_fileUpload)
 
 //Get Courses
 router.get('/get', auth, getCourse)

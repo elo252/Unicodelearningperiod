@@ -1,7 +1,6 @@
-
 const User = require('../models/user')
-
-
+const multer = require('multer')
+const sharp = require('sharp')
 
 exports.createUser = async (req, res) => {
   try {
@@ -21,6 +20,47 @@ exports.createUser = async (req, res) => {
         message: e.message
       })
     }
+}
+
+//Add profile picture
+exports.upload = multer({
+  limits: {
+    fileSize: 1000000
+  },
+  fileFilter(req, file, cb) {
+    if(!file.originalname.match(/\.jpg|jpeg|png/)) {
+      return cb(new Error('Incorrect file format! Please enter image!!'))
+    }
+    cb(undefined, true)
+  }
+})
+
+exports.addPfp = async (req, res) => {
+  const buffer = await sharp(req.file.buffer).resize({ width: 250, height: 250 }).png().toBuffer()
+  req.user.profilePic = buffer
+  await req.user.save()
+  res.json({
+    success: true
+  })
+}
+
+//View profile picture
+exports.viewPfp = async(req, res) => {
+  try{
+    const user = await User.findById(req.params.id)
+    console.log('here')
+    if(!user || !user.profilePic) {
+      throw new Error()
+    }
+
+    res.set('Content-Type', 'image/png')
+    res.send(user.profilePic)
+  } catch (e) {    
+    res.status(404).json({
+      success: false,
+      message: e
+    })
+  } 
 }
 
 exports.loginUser = async (req, res) => {

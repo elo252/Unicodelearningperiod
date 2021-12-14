@@ -10,12 +10,20 @@ const auth = require('../middleware/auth')
   deleteUser,
   getStudents,
   getTeachers,
-  logoutUser
+  logoutUser,
+  addPfp,
+  viewPfp
 
 } = require('../controllers/user')
 
 //Create New User 
 router.post('/new', createUser)
+
+//Upload profile picture
+router.post('/profilePicture', auth, upload.single('profilePicture'), addPfp)
+
+//View profile picture
+router.get('/viewpfp/:id', auth, viewPfp)
 
 //Login User - Public
 router.post('/login', loginUser )
