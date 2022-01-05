@@ -17,6 +17,7 @@ exports.createCourse = async (req, res) => {
         message: e.message
       })
     }
+  }
 
 //video upload
 
@@ -203,4 +204,4 @@ exports.deleteCourse = async (req, res) => {
           message: e.message
         })
       }
-  }
+    }
