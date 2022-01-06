@@ -1,7 +1,20 @@
 const mongoose = require('mongoose')
+const dotenv = require('dotenv')
+dotenv.config()
 
 
-const db = "mongodb+srv://user-ojasy:goaldiggers2020@cluster0.btfod.mongodb.net/UnicodeTask5?retryWrites=true&w=majority"
+let db
+
+if (process.env.ENVIRONMENT === 'production') {
+  console.log("Env Changed to Prod")
+    db = process.env.DB;
+} else if (process.env.ENVIRONMENT === 'test') {
+    db = process.env.DBT;
+    console.log("Env Changed to Test")
+}
+
+
+
 mongoose
   .connect(db, {
     useNewUrlParser: true,

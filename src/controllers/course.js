@@ -17,6 +17,7 @@ exports.createCourse = async (req, res) => {
         message: e.message
       })
     }
+}
 
 //video upload
 
@@ -51,7 +52,7 @@ exports.course_videoUpload = async (req, res) => {
           error: err.message
         })
       }
-      res.json({
+      res.status(201).json({
         success: true
       })
     })
@@ -90,7 +91,7 @@ exports.course_fileUpload = async (req, res) => {
           error: err.message
         })
       }
-      res.json({
+      res.status(201).json({
         success: true
       })
     })
@@ -102,7 +103,7 @@ exports.getCourse = async (req,res) => {
         if (!getCourse.length) {
             throw new Error('No Courses!')
            }
-        res.json({
+        res.status(200).json({
             success: true,
             data: getCourse
            
@@ -123,7 +124,7 @@ exports.getCoursebByOwner = async (req,res) => {
             throw new Error('Course not found');
            }
 
-        res.json({
+        res.status(200).json({
             success: true,
             data: getCourseByOwner
         })
@@ -143,7 +144,7 @@ exports.getCourseByName = async (req,res) => {
             throw new Error('Course not found');
            }
 
-        res.json({
+        res.status(200).json({
             success: true,
             data: getCourseByName
         })
@@ -193,7 +194,7 @@ exports.deleteCourse = async (req, res) => {
         if (!_id) {
           throw new Error('No Courses to delete!')
       }
-        res.json({
+        res.status(200).json({
           success: true,
           data: req.course
         })

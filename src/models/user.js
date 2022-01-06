@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema({
   mobile: {
     type:Number,
     unique: [true, 'Sorry, enter another mobile number, as already taken'],
-    required: [true, 'Mobile Number'],
+    //required: [true, 'Mobile Number'],
     minlength:10,
     maxlength:10
 

@@ -71,7 +71,7 @@ exports.loginUser = async (req, res) => {
 
     const token = await user.generateAuthToken()
 
-    res.status(201).json({
+    res.status(200).json({
       success: true,
       data: user, token
     })
@@ -91,7 +91,7 @@ exports.logoutUser = async (req,res) => {
     })
     await req.user.save()
 
-    res.send()
+    res.status(200).send()
 } catch (e) {
     res.status(500).send()
 }
@@ -104,7 +104,7 @@ exports.getUsers = async (req,res) => {
       if (!getUser.length) {
         throw new Error('No users!')
        }
-      res.json({
+      res.status(302).json({
           success: true,
           data: getUser
          
@@ -123,7 +123,7 @@ exports.getStudents = async (req, res) => {
     if (!getStudents.length) {
       throw new Error('No users!')
      }
-    res.json({
+    res.status(302).json({
         success: true,
         data: getStudents
        
@@ -142,7 +142,7 @@ exports.getTeachers = async (req, res) => {
     if (!getTeachers.length) {
       throw new Error('No users!')
      }
-    res.json({
+    res.status(302).json({
         success: true,
         data: getTeachers
        
@@ -173,7 +173,7 @@ exports.updateUser = async (req, res) => {
       return res.status(404).send('User not found')
    }
       
-      res.json({
+      res.status(200).json({
         success: true,
         data: User
       })
@@ -224,7 +224,7 @@ exports.deleteUser = async (req, res) => {
       if (!_id) {
         throw new Error('No users to delete!');
     }
-      res.json({
+      res.status(200).json({
         success: true,
         data: req.user
       })

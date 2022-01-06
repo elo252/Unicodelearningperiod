@@ -9,6 +9,8 @@ const {
   getCourse,
   getCoursebByOwner,
   getCourseByName,
+  videoUpload,
+  fileUpload,
   deleteCourse
 } = require('../controllers/course')
 
@@ -16,10 +18,10 @@ const {
 router.post('/new', auth, createCourse)
 
 //Upload videos in course
-router.post('/uploadvideo', auth, upload.single('video'), course_videoUpload)
+router.post('/uploadvideo', auth, videoUpload.single('video'), course_videoUpload)
 
 //Upload files in course
-router.post('/uploadfile', auth, upload.single('file'), course_fileUpload)
+router.post('/uploadfile', auth, fileUpload.single('file'), course_fileUpload)
 
 //Get Courses
 router.get('/get', auth, getCourse)

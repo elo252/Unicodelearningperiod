@@ -11,6 +11,7 @@ const auth = require('../middleware/auth')
   getStudents,
   getTeachers,
   logoutUser,
+  upload,
   addPfp,
   viewPfp
 
